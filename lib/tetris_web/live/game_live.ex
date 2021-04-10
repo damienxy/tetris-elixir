@@ -6,7 +6,7 @@ defmodule TetrisWeb.GameLive do
   # the socket contains the entire info for the state for the live view
   def mount(_params, _session, socket) do
     # trigger tick events
-    :timer.send_interval(500, :tick)
+    :timer.send_interval(200, :tick)
     {
       :ok, 
       socket 
@@ -19,14 +19,14 @@ defmodule TetrisWeb.GameLive do
 
   # the render happens after any change to the socket
   def render(assigns) do
-    # LiveView sigil, imported via line 2 above
+    # properties of `assigns` can be accessed via @, e.g. @points
     ~L"""
-    <% [{x, y}] = @points %>
+    <% {x, y} = @tetro.location %>
     <section class="phx-hero">
       <h1>Welcome to Tetris</h1>
       <%= render_board(assigns) %>
       <pre>
-        {<%= x %>, <%= y %>}
+        <%= inspect @tetro %>
       </pre>
     </section>
     """
@@ -46,12 +46,16 @@ defmodule TetrisWeb.GameLive do
     """
   end
 
-  defp render_points(%{points: [{x, y}]} = assigns) do
+  defp render_points(assigns) do
     ~L"""
-    <rect width="20" height="20" 
-    x="<%= x * 20 %>" 
-    y="<%= y * 20 %>" 
-    style="fill:rgb(255,0,0);" />
+    <%= for {x, y} <- @points do %>
+      <rect 
+        width="20" height="20" 
+        x="<%= (x - 1) * 20 %>" 
+        y="<%= (y - 1) * 20 %>" 
+        style="fill:rgb(255,0,0);"
+      />
+    <% end %>
     """
   end
 
@@ -61,7 +65,7 @@ defmodule TetrisWeb.GameLive do
 
   defp show(socket) do
     assign(socket, 
-      points: Tetromino.points(socket.assigns.tetro)
+      points: Tetromino.show(socket.assigns.tetro)
     )
   end
 
