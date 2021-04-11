@@ -5,8 +5,11 @@ defmodule TetrisWeb.GameLive do
   # the mount sets up the initial data for a live view
   # the socket contains the entire info for the state for the live view
   def mount(_params, _session, socket) do
-    # trigger tick events
-    :timer.send_interval(200, :tick)
+    # this makes sure the socket is connected before starting the timer
+    if connected?(socket) do
+      # trigger tick events
+      :timer.send_interval(200, :tick)
+    end
     {
       :ok, 
       socket 
@@ -14,8 +17,6 @@ defmodule TetrisWeb.GameLive do
       |> show
     }
   end
-
- 
 
   # the render happens after any change to the socket
   def render(assigns) do
@@ -48,16 +49,27 @@ defmodule TetrisWeb.GameLive do
 
   defp render_points(assigns) do
     ~L"""
-    <%= for {x, y} <- @points do %>
+    <%= for {x, y, shape} <- @points do %>
       <rect 
         width="20" height="20" 
-        x="<%= (x - 1) * 20 %>" 
-        y="<%= (y - 1) * 20 %>" 
-        style="fill:rgb(255,0,0);"
+        x="<%= (x - 1) * 20 %>"
+        y="<%= (y - 1) * 20 %>"
+        style="fill:<%= color(shape) %>;"
       />
     <% end %>
     """
   end
+
+  # one-line function syntax
+  defp color(:l), do: "red"
+  defp color(:j), do: "royalblue"
+  defp color(:s), do: "limegreen"
+  defp color(:z), do: "yellow"
+  defp color(:o), do: "magenta"
+  defp color(:i), do: "silver"
+  defp color(:t), do: "saddlebrown"
+  defp color(_), do: "white"
+
 
   defp new_tetromino(socket) do
     assign(socket, tetro: Tetromino.new_random())

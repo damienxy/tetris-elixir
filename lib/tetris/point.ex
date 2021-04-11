@@ -18,4 +18,12 @@ defmodule Tetris.Point do
   def move({x, y}, {change_x, change_y}) do
     {x + change_x, y + change_y}
   end
+
+    def add_shape({x, y}, shape) do
+    {x, y, shape}
+  end
+
+  def add_shape(point_with_shape, _shape) do
+    point_with_shape
+  end
 end
