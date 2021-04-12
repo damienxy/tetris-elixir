@@ -83,12 +83,15 @@ defmodule TetrisWeb.GameLive do
 
   # reducers related to handling events
 
+  def rotate(%{assigns: %{tetro: tetro}} = socket) do
+    assign(socket, tetro: Tetromino.rotate(tetro))
+  end
+
   # parameter destructuring
   # pattern matching for when it is all the way down (y = 20)
   def down(%{assigns: %{tetro: %{location: {_, 20}}}} = socket) do
     socket
     |> new_tetromino
-    |> show
   end
 
   def down(%{assigns: %{tetro: tetro}} = socket) do
@@ -97,6 +100,6 @@ defmodule TetrisWeb.GameLive do
 
   # handle tick events
   def handle_info(:tick, socket) do
-    {:noreply, socket |> down |> show} 
+    {:noreply, socket |> down |> rotate |> show} 
   end
 end
