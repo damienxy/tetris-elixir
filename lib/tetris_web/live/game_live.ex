@@ -90,13 +90,6 @@ defmodule TetrisWeb.GameLive do
     assign(socket, game: Game.right(game))
   end
 
-  # parameter destructuring
-  # pattern matching for when it is all the way down (y = 20)
-  def down(%{assigns: %{game: %{tetro: %{location: {_, 20}}}}} = socket) do
-    socket
-    |> new_tetromino
-  end
-
   def down(%{assigns: %{game: game}} = socket) do
     assign(socket, game: Game.down(game))
   end
