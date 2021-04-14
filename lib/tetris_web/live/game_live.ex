@@ -108,4 +108,7 @@ defmodule TetrisWeb.GameLive do
   def handle_event("keystroke", %{"key" => "ArrowRight"}, socket) do
     {:noreply, socket |> right}
   end
+  def handle_event("keystroke", %{"key" => _}, socket) do
+    {:noreply, socket}
+  end
 end
