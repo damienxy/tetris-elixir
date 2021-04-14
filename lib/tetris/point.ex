@@ -34,19 +34,16 @@ defmodule Tetris.Point do
   def rotate(point, 0) do
     point
   end
-
   def rotate(point, 90) do
     point
     |> flip
     |> transpose
   end
-
   def rotate(point, 180) do
     point
     |> mirror
     |> flip
   end
-  
   def rotate(point, 270) do
     point
     |> mirror
@@ -56,8 +53,12 @@ defmodule Tetris.Point do
   def add_shape({x, y}, shape) do
     {x, y, shape}
   end
-
   def add_shape(point_with_shape, _shape) do
     point_with_shape
   end
+
+  def in_bounds?({x, y, _color}), do: in_bounds?({x, y})
+  def in_bounds?({x, _y}) when x < 1, do: false
+  def in_bounds?({x, _y}) when x > 10, do: false
+  def in_bounds?(_point), do: true
 end
