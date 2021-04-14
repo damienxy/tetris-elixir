@@ -24,7 +24,7 @@ defmodule TetrisWeb.GameLive do
         <h1>Welcome to Tetris</h1>
         <%= render_board(assigns) %>
         <pre>
-          <%= inspect @game.tetro %>
+          <%= inspect @game %>
         </pre>
       </div>
     </section>
@@ -47,7 +47,7 @@ defmodule TetrisWeb.GameLive do
 
   defp render_points(assigns) do
     ~L"""
-    <%= for {x, y, shape} <- @game.points do %>
+    <%= for {x, y, shape} <- @game.points ++ Game.junkyard_points(@game) do %>
       <rect 
         width="20" height="20" 
         x="<%= (x - 1) * 20 %>"
