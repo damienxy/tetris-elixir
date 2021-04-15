@@ -15,13 +15,14 @@ defmodule TetrisWeb.GameLive do
     {:ok, new_game(socket)}
   end
 
-  # the render happens after any change to the socket
+    # the render happens after any change to the socket
   def render(assigns) do
     # properties of `assigns` can be accessed via @, e.g. @points
     ~L"""
     <section class="phx-hero">
       <div phx-window-keydown="keystroke">
         <h1>Welcome to Tetris</h1>
+        <h2>Your score: <%=@game.score %></h2>
         <%= render_board(assigns) %>
         <pre>
           <%= inspect @game %>
@@ -70,10 +71,6 @@ defmodule TetrisWeb.GameLive do
 
   defp new_game(socket) do
     assign(socket, game: Game.new())
-  end
-
-  defp new_tetromino(socket) do
-    assign(socket, game: Game.new_tetromino(socket.assigns.game))
   end
 
   # reducers related to handling events
