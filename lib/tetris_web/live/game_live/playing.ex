@@ -74,9 +74,20 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.down(game))
   end
 
+  def maybe_end_game(%{assigns: %{game: %{game_over: true}}} = socket) do
+    socket
+    |> push_redirect(to: "/game/over")
+  end
+  def maybe_end_game(socket), do: socket
+
   # handle tick events
   def handle_info(:tick, socket) do
-    {:noreply, socket |> down} 
+    {
+      :noreply, 
+      socket 
+      |> down
+      |> maybe_end_game      
+    } 
   end
 
   def handle_event("keystroke", %{"key" => key}, socket) when key in @rotate_keys do
@@ -88,7 +99,7 @@ defmodule TetrisWeb.GameLive.Playing do
   def handle_event("keystroke", %{"key" => "ArrowRight"}, socket) do
     {:noreply, socket |> right}
   end
-  def handle_event("keystroke", %{"key" => _}, socket) do
+  def handle_event("keystroke", _, socket) do
     {:noreply, socket}
   end
 end

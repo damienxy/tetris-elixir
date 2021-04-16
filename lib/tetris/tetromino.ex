@@ -1,7 +1,7 @@
 defmodule Tetris.Tetromino do
   # structure definition
   # returns a Map with some restrictions (e.g. enforcing keys)
-  defstruct shape: :l, rotation: 0, location: {3, 0} 
+  defstruct shape: :l, rotation: 0, location: {3, -4} 
 
   # aliasing Tetris.Point and Tetris.Points so they can be referred to as `Point`
   alias Tetris.{Point, Points}

@@ -18,7 +18,8 @@ defmodule TetrisWeb.Router do
     pipe_through :browser
 
     # `:playing` is a live action
-    live "/game", GameLive.Playing, :playing
+    live "/game/playing", GameLive.Playing, :playing
+    live "/game/over", GameLive.GameOver, :game_over
     live "/", PageLive, :index
   end
 
