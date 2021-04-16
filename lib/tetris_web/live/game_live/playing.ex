@@ -1,4 +1,4 @@
-defmodule TetrisWeb.GameLive do
+defmodule TetrisWeb.GameLive.Playing do
   use TetrisWeb, :live_view
   alias Tetris.Game
 
@@ -13,23 +13,6 @@ defmodule TetrisWeb.GameLive do
       :timer.send_interval(500, :tick)
     end
     {:ok, new_game(socket)}
-  end
-
-    # the render happens after any change to the socket
-  def render(assigns) do
-    # properties of `assigns` can be accessed via @, e.g. @points
-    ~L"""
-    <section class="phx-hero">
-      <div phx-window-keydown="keystroke">
-        <h1>Welcome to Tetris</h1>
-        <h2>Your score: <%=@game.score %></h2>
-        <%= render_board(assigns) %>
-        <pre>
-          <%= inspect @game %>
-        </pre>
-      </div>
-    </section>
-    """
   end
 
   # reducers related to render
