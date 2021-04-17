@@ -75,7 +75,7 @@ defmodule Tetris.Game do
     new_junkyard = 
       game.junkyard
       |> Enum.reject(fn {{_x, y}, _shape} -> y == row end)
-      |> Enum.map(fn {{x, y}, shape} -> {{x, maybe_move_y(row, y)}, shape} end)
+      |> Enum.map(fn {{x, y}, shape} -> {{x, maybe_move_y(y, row)}, shape} end)
       |> Map.new
     
     %{game | junkyard: new_junkyard}
