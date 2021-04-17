@@ -104,6 +104,7 @@
 }
 
 .tetris-board {
+  position: relative;
 }
 
 .tetris-info {
@@ -117,6 +118,31 @@
 
 .tetris-score {
   font-size: 16px;
+}
+
+.tetris-game-over {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-family: monospace;
+}
+
+.tetris-game-over-heading {
+  font-size: 30px;
+  font-weight: bold;
+  font-family: monospace;
+  margin-bottom: 12px;
+}
+
+.tetris-play-button {
 }
 
 .tetris-hide {

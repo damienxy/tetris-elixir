@@ -10,7 +10,7 @@ defmodule TetrisWeb.GameLive.Playing do
       # trigger tick events
       :timer.send_interval(500, :tick)
     end
-    {:ok, new_game(socket)}
+    {:ok, socket |> new_game}
   end
 
   # reducers related to render
@@ -49,7 +49,17 @@ defmodule TetrisWeb.GameLive.Playing do
     """
   end
 
-  # one-line function syntax
+  defp render_game_over(assigns) do
+    ~L"""
+    <%= if @game.game_over do %>
+      <div class="tetris-game-over">
+        <div class="tetris-game-over-heading">Game over!</div>
+        <button class="tetris-play-button" phx-click="restart">Play again</button>
+      </div>
+    <% end %>
+    """
+  end
+
   defp color(:l), do: "royalblue"
   defp color(:j), do: "limegreen"
   defp color(:s), do: "cyan"
@@ -58,7 +68,6 @@ defmodule TetrisWeb.GameLive.Playing do
   defp color(:i), do: "yellow"
   defp color(:t), do: "orange"
   
-
   defp new_game(socket) do
     assign(socket, game: Game.new())
   end
@@ -91,19 +100,16 @@ defmodule TetrisWeb.GameLive.Playing do
   end
   def maybe_end_game(socket), do: socket
 
-  def make_move(socket) do
-    socket
-    |> down
-    |> maybe_end_game
+  def handle_info(:tick, socket) do
+    {:noreply, socket |> down} 
   end
 
-  # handle tick events
-  def handle_info(:tick, socket) do
-    {:noreply, socket |> make_move} 
+  def handle_event("restart", _, socket) do
+    {:noreply, socket |> new_game}
   end
 
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
-    {:noreply, socket |> make_move}
+    {:noreply, socket |> down}
   end
   def handle_event("keystroke", %{"key" => "ArrowUp"}, socket) do
     {:noreply, socket |> rotate}

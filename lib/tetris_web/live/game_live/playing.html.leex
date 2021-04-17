@@ -6,6 +6,7 @@
       <div class="tetris-score">Your score: <%=@game.score %></div>
     </div>
     <div class="tetris-board">
+      <%= render_game_over(assigns) %>
       <%= render_board(assigns) %>
     </div>
     <div class="tetris-info">
