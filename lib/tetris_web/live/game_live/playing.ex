@@ -16,39 +16,48 @@ defmodule TetrisWeb.GameLive.Playing do
   # reducers related to render
 
   # width and height of the svg are calculated by assuming that 
-  # the board will have 10 columns and 20 rows, and
-  # every point will be 20x20
+  # the board will have 10 columns and 20 rows
   defp render_board(assigns) do
+    tetromino_size = 30
     ~L"""
-    <svg width="200" height="400">
-      <rect width="200" height="400" style="fill:rgb(0,0,0);" />
-      <%= render_points(assigns) %>
+    <svg width="<%= 10 * tetromino_size %>" height="<%= 20 * tetromino_size %>">
+      <rect width="<%= 10 * tetromino_size %>" height="<%= 20 * tetromino_size %>" style="fill:#121212;" />
+      <%= render_points(assigns, tetromino_size) %>
     </svg>
     """
   end
 
-  defp render_points(assigns) do
+  defp render_points(assigns, size) do
     ~L"""
     <%= for {x, y, shape} <- @game.points ++ Game.junkyard_points(@game) do %>
-      <rect 
-        width="20" height="20" 
-        x="<%= (x - 1) * 20 %>"
-        y="<%= (y - 1) * 20 %>"
+      <rect
+        width="<%= size %>" height="<%= size %>"
+        x="<%= (x - 1) * size %>"
+        y="<%= (y - 1) * size %>"
         style="fill:<%= color(shape) %>;"
+        stroke="black"
+      />
+      <polyline
+        opacity="0.1"
+        points="
+          <%= ((x - 1) * size + 1) %>,<%= ((y - 1) * size + 1) %> 
+          <%= ((x - 1) * size + size)%>,<%= ((y - 1) * size + 1) %> 
+          <%= ((x - 1) * size + size)%>,<%= ((y - 1) * size + size) %>
+        "
       />
     <% end %>
     """
   end
 
   # one-line function syntax
-  defp color(:l), do: "red"
-  defp color(:j), do: "royalblue"
-  defp color(:s), do: "limegreen"
-  defp color(:z), do: "yellow"
-  defp color(:o), do: "magenta"
-  defp color(:i), do: "silver"
-  defp color(:t), do: "saddlebrown"
-  defp color(_), do: "white"
+  defp color(:l), do: "royalblue"
+  defp color(:j), do: "limegreen"
+  defp color(:s), do: "cyan"
+  defp color(:z), do: "darkviolet"
+  defp color(:o), do: "red"
+  defp color(:i), do: "yellow"
+  defp color(:t), do: "orange"
+  
 
   defp new_game(socket) do
     assign(socket, game: Game.new())

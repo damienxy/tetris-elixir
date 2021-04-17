@@ -1,7 +1,16 @@
-<section class="phx-hero">
-  <div phx-window-keydown="keystroke">
-    <h1>Welcome to Tetris</h1>
-    <h2>Your score: <%=@game.score %></h2>
-    <%= render_board(assigns) %>
+<section class="phx-hero tetris-hero">
+  <div phx-window-keydown="keystroke" />
+  <div class="tetris-game">
+    <div class="tetris-info tetris-hide">
+      <div class="tetris-heading">TETRIS</div>
+      <div class="tetris-score">Your score: <%=@game.score %></div>
+    </div>
+    <div class="tetris-board">
+      <%= render_board(assigns) %>
+    </div>
+    <div class="tetris-info">
+      <div class="tetris-heading">TETRIS</div>
+      <div class="tetris-score">Your score: <%=@game.score %></div>
+    </div>
   </div>
 </section>
