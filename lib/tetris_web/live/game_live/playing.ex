@@ -22,7 +22,7 @@ defmodule TetrisWeb.GameLive.Playing do
   # every point will be 20x20
   defp render_board(assigns) do
     ~L"""
-    <svg width=200" height="400">
+    <svg width="200" height="400">
       <rect width="200" height="400" style="fill:rgb(0,0,0);" />
       <%= render_points(assigns) %>
     </svg>
