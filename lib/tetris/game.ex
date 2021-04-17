@@ -1,5 +1,5 @@
 defmodule Tetris.Game do
-  defstruct [:tetro, points: [], score: 0, junkyard: %{}, game_over: false]
+  defstruct [:tetro, points: [], score: 0, junkyard: %{}, game_over: false, pause: false]
   alias Tetris.{Points, Tetromino}
 
   def new do
@@ -24,7 +24,8 @@ defmodule Tetris.Game do
     |> show
   end
 
-    def down(game) do
+  def down(%{pause: true} = game), do: game
+  def down(game) do
     {old, new, valid} = move_data(game, &Tetromino.down/1)
     move_down_or_merge(game, old, new, valid)
   end
@@ -88,7 +89,6 @@ defmodule Tetris.Game do
       :math.pow(length(rows), 2) 
       |> round 
       |> Kernel.*(100)
-      |> IO.inspect
 
     increment_score(game, new_score)
   end
@@ -112,6 +112,8 @@ defmodule Tetris.Game do
   def show(game) do
     %{game | points: Tetromino.show(game.tetro)}
   end
+
+  def pause(game, bool), do: %{game | pause: bool}
 
   defp increment_score(game, value) do
     %{game | score: game.score + value}

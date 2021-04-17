@@ -2,7 +2,7 @@ defmodule TetrisWeb.GameLive.Playing do
   use TetrisWeb, :live_view
   alias Tetris.Game
 
-  @rotate_keys ["ArrowDown", "ArrowUp", " "]
+  @rotate_keys ["ArrowDown", "ArrowUp"]
 
   # the mount sets up the initial data for a live view
   # the socket contains the entire info for the state for the live view
@@ -74,6 +74,10 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.down(game))
   end
 
+  def pause(%{assigns: %{game: game}} = socket) do
+    assign(socket, game: Game.pause(game, !game.pause))
+  end
+
   def maybe_end_game(%{assigns: %{game: %{game_over: true}}} = socket) do
     socket
     |> push_redirect(to: "/game/over?score=#{socket.assigns.game.score}")
@@ -98,6 +102,9 @@ defmodule TetrisWeb.GameLive.Playing do
   end
   def handle_event("keystroke", %{"key" => "ArrowRight"}, socket) do
     {:noreply, socket |> right}
+  end
+  def handle_event("keystroke", %{"key" => " "}, socket) do
+    {:noreply, socket |> pause}
   end
   def handle_event("keystroke", _, socket) do
     {:noreply, socket}
