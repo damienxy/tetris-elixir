@@ -113,7 +113,7 @@ defmodule Tetris.Game do
     %{game | points: Tetromino.show(game.tetro)}
   end
 
-  def pause(game, bool), do: %{game | pause: bool}
+  def toggle_pause(game), do: %{game | pause: !game.pause}
 
   defp increment_score(game, value) do
     %{game | score: game.score + value}
