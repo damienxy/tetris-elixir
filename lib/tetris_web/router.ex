@@ -20,7 +20,6 @@ defmodule TetrisWeb.Router do
     # `:playing` is a live action
     live "/game/welcome", GameLive.Welcome, :welcome
     live "/game/playing", GameLive.Playing, :playing
-    live "/game/over", GameLive.GameOver, :game_over
     live "/", PageLive, :index
   end
 
