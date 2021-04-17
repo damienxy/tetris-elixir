@@ -23,30 +23,30 @@ defmodule Tetris.Point do
     {y, x}
   end
 
-  def mirror({x, y}) do
-    {5-x, y}
+  def mirror({x, y}, grid) do
+    {grid - x, y}
   end
 
-  def flip({x, y}) do
-    {x, 5-y}
+  def flip({x, y}, grid) do
+    {x, grid - y}
   end
 
-  def rotate(point, 0) do
+  def rotate(point, 0, _grid), do
     point
   end
-  def rotate(point, 90) do
+  def rotate(point, 90, grid) do
     point
-    |> flip
+    |> flip(grid)
     |> transpose
   end
-  def rotate(point, 180) do
+  def rotate(point, 180, grid) do
     point
-    |> mirror
-    |> flip
+    |> mirror(grid)
+    |> flip(grid)
   end
-  def rotate(point, 270) do
+  def rotate(point, 270, grid) do
     point
-    |> mirror
+    |> mirror(grid)
     |> transpose
   end
 

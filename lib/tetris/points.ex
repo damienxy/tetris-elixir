@@ -11,13 +11,12 @@ defmodule Tetris.Points do
     |> Enum.map(fn point -> Point.add_shape(point, shape) end)
   end
 
-  def rotate(points, degrees) do
+  def rotate(points, degrees, grid) do
     points
-    |> Enum.map(fn point -> Point.rotate(point, degrees) end)
+    |> Enum.map(fn point -> Point.rotate(point, degrees, grid) end)
   end
 
   def valid?(points, junkyard) do
     Enum.all?(points, &Point.valid?(&1, junkyard))
   end
-
 end

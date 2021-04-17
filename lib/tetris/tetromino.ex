@@ -35,7 +35,7 @@ defmodule Tetris.Tetromino do
   def show(tetro) do
     tetro
     |> points
-    |> Points.rotate(tetro.rotation)
+    |> Points.rotate(tetro.rotation, grid(tetro.shape))
     |> Points.move(tetro.location)
     |> Points.add_shape(tetro.shape)
   end
@@ -45,6 +45,7 @@ defmodule Tetris.Tetromino do
             {2,1},
             {2,2},
             {2,3},{3,3}
+
     ]
   end
 
@@ -77,10 +78,10 @@ defmodule Tetris.Tetromino do
 
    def points(%{shape: :i}) do
     [
-            {2,1},
-            {2,2},
-            {2,3},
-            {2,4}
+
+      {1,2},{2,2},{3,2},{4,2}
+
+
     ]
   end
 
@@ -101,16 +102,18 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  # def points(%{shape}) do
-  #   [
-  #     {1,1},{2,1},{3,1},{4,1}
-  #     {1,2},{2,2},{3,2},{4,2}
-  #     {1,3},{2,3},{3,3},{4,3}
-  #     {1,4},{2,4},{3,3},{4,4}
-  #   ]
-  # end
-
   # defp defines private functions
+
+  defp grid(shape) when shape in [:i, :o] do 5 end
+  defp grid(shape), do: 4
+
+  defp color(:l), do: "royalblue"
+  defp color(:j), do: "limegreen"
+  defp color(:s), do: "cyan"
+  defp color(:z), do: "darkviolet"
+  defp color(:o), do: "red"
+  defp color(:i), do: "yellow"
+  defp color(:t), do: "orange"
 
   defp random_shape do
     ~w[i t o l j z s]a
