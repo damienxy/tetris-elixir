@@ -17,11 +17,6 @@ defmodule Tetris.Points do
     |> List.first
   end
 
-  def remove_shape(points_with_shape) do
-    points_with_shape
-    |> Enum.map(fn point -> Point.remove_shape(point) end)
-  end
-
   def move_one_down(points_with_shape) do
     points_with_shape 
     |> remove_shape
@@ -35,5 +30,10 @@ defmodule Tetris.Points do
 
   def valid?(points, junkyard) do
     Enum.all?(points, &Point.valid?(&1, junkyard))
+  end
+
+  defp remove_shape(points_with_shape) do
+    points_with_shape
+    |> Enum.map(fn point -> Point.remove_shape(point) end)
   end
 end
