@@ -31,7 +31,7 @@ defmodule Tetris.Point do
     {x, grid - y}
   end
 
-  def rotate(point, 0, _grid), do
+  def rotate(point, 0, _grid) do
     point
   end
   def rotate(point, 90, grid) do
@@ -55,6 +55,10 @@ defmodule Tetris.Point do
   end
   def add_shape(point_with_shape, _shape) do
     point_with_shape
+  end
+
+  def remove_shape({x, y, _shape}) do
+    {x, y}
   end
 
   def valid?(point, junkyard) do

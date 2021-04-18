@@ -23,7 +23,23 @@ defmodule TetrisWeb.GameLive.Playing do
     <svg width="<%= 10 * tetromino_size %>" height="<%= 20 * tetromino_size %>">
       <rect width="<%= 10 * tetromino_size %>" height="<%= 20 * tetromino_size %>" style="fill:#121212;" />
       <%= render_points(assigns, tetromino_size) %>
+      <%= render_preview(assigns, tetromino_size) %>
     </svg>
+    """
+  end
+
+  defp render_preview(assigns, size) do
+    ~L"""
+    <%= for {x, y, shape} <- @game.preview do %>
+      <rect
+        width="<%= size %>" height="<%= size %>"
+        x="<%= (x - 1) * size %>"
+        y="<%= (y - 1) * size %>"
+        style="fill:grey;"
+        stroke="black"
+        opacity="0.3"
+      />
+    <% end %>
     """
   end
 

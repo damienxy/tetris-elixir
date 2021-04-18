@@ -1,5 +1,5 @@
 defmodule Tetris.Game do
-  defstruct [:tetro, points: [], score: 0, junkyard: %{}, game_over: false, pause: false]
+  defstruct [:tetro, points: [], preview: [], score: 0, junkyard: %{}, game_over: false, pause: false]
   alias Tetris.{Points, Tetromino}
 
   def new do
@@ -110,7 +110,33 @@ defmodule Tetris.Game do
   end
 
   def show(game) do
-    %{game | points: Tetromino.show(game.tetro)}
+    new_points = Tetromino.show(game.tetro)
+    %{game | 
+      points: new_points, 
+      preview: add_preview(game, new_points)}
+  end
+
+  defp add_preview(game, points) do
+    find_lowest_preview(game, points)
+  end
+  
+  def find_lowest_preview(game, points) do
+    {moved_down, valid} = move_one_down(game, points)
+
+    if !valid do
+      points
+    else
+      shape = points |> Points.get_shape
+      new_points = moved_down |> Points.add_shape(shape)
+      find_lowest_preview(game, new_points)
+    end
+  end
+
+  def move_one_down(game, points) do
+    moved_down = points |> Points.move_one_down
+    valid = moved_down |> Points.valid?(game.junkyard)
+
+    {moved_down, valid}
   end
 
   def toggle_pause(game), do: %{game | pause: !game.pause}
