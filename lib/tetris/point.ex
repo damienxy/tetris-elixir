@@ -1,8 +1,4 @@
 defmodule Tetris.Point do
-  def origin() do
-    {0, 0}
-  end
-
   def left({x, y}) do
     {x-1, y}
   end
@@ -17,18 +13,6 @@ defmodule Tetris.Point do
 
   def move({x, y}, {change_x, change_y}) do
     {x + change_x, y + change_y}
-  end
-
-  def transpose({x, y}) do
-    {y, x}
-  end
-
-  def mirror({x, y}, grid) do
-    {grid - x, y}
-  end
-
-  def flip({x, y}, grid) do
-    {x, grid - y}
   end
 
   def rotate(point, 0, _grid) do
@@ -65,12 +49,24 @@ defmodule Tetris.Point do
     in_bounds?(point) and !collide?(point, junkyard)
   end
 
-  def in_bounds?({x, y, _shape}), do: in_bounds?({x, y})
-  def in_bounds?({x, _y}) when x < 1, do: false
-  def in_bounds?({x, _y}) when x > 10, do: false
-  def in_bounds?({_x, y}) when y > 20, do: false
-  def in_bounds?(_point), do: true
+  defp transpose({x, y}) do
+    {y, x}
+  end
 
-  def collide?({x, y, _shape}, junkyard), do: collide?({x, y}, junkyard)
-  def collide?(point, junkyard), do: !!junkyard[point]
+  defp mirror({x, y}, grid) do
+    {grid - x, y}
+  end
+
+  defp flip({x, y}, grid) do
+    {x, grid - y}
+  end
+
+  defp in_bounds?({x, y, _shape}), do: in_bounds?({x, y})
+  defp in_bounds?({x, _y}) when x < 1, do: false
+  defp in_bounds?({x, _y}) when x > 10, do: false
+  defp in_bounds?({_x, y}) when y > 20, do: false
+  defp in_bounds?(_point), do: true
+
+  defp collide?({x, y, _shape}, junkyard), do: collide?({x, y}, junkyard)
+  defp collide?(point, junkyard), do: !!junkyard[point]
 end
