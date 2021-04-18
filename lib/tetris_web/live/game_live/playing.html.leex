@@ -4,7 +4,10 @@
     <div class="tetris-info tetris-hide">
       <div class="tetris-heading">TETRIS</div>
       <div class="tetris-score">Your score: <%=@game.score %></div>
-      <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
+      <section class="tetris-actions">
+        <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
+        <div class="tetris-restart" phx-click="restart">Restart</div>
+      </section>
     </div>
     <div class="tetris-board">
       <%= render_game_over(assigns) %>
@@ -14,7 +17,10 @@
     <div class="tetris-info">
       <div class="tetris-heading">TETRIS</div>
       <div class="tetris-score">Your score: <%=@game.score %></div>
-      <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
+      <section class="tetris-actions">
+        <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
+        <div class="tetris-restart" phx-click="restart">Restart</div>
+      </section>
     </div>
   </div>
 </section>

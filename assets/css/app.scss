@@ -120,13 +120,18 @@
   font-size: 16px;
 }
 
-.tetris-pause {
-  font-size: 16px;
+.tetris-actions {
   margin-top: 20px;
+}
+
+.tetris-pause,
+.tetris-restart {
+  font-size: 16px;
   cursor: pointer;
 }
 
-.tetris-pause:hover {
+.tetris-pause:hover,
+.tetris-restart:hover {
   text-decoration: underline;
 }
 
