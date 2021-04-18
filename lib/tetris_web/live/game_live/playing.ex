@@ -121,12 +121,6 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.toggle_pause(game))
   end
 
-  def maybe_end_game(%{assigns: %{game: %{game_over: true}}} = socket) do
-    socket
-    |> push_redirect(to: "/game/over?score=#{socket.assigns.game.score}")
-  end
-  def maybe_end_game(socket), do: socket
-
   def handle_info(:tick, socket) do
     {:noreply, socket |> down} 
   end
