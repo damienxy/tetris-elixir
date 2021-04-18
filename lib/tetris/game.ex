@@ -7,7 +7,27 @@ defmodule Tetris.Game do
     |> new_tetromino
   end
 
-  def move_data(game, move_fn) do
+  def down(game) do
+    {old, new, valid} = move_data(game, &Tetromino.down/1)
+    move_down_or_merge(game, old, new, valid)
+  end
+
+  def left(game), do: game |> move(&Tetromino.left/1) |> show
+  
+  def right(game), do: game |> move(&Tetromino.right/1) |> show
+
+  def rotate(game), do: game |> move(&Tetromino.rotate/1) |> show
+
+  def drop(game), do: game |> merge_and_next(game.preview)
+
+  def toggle_pause(game), do: %{game | pause: !game.pause}
+
+  def junkyard_points(game) do
+    game.junkyard
+    |> Enum.map(fn {{x, y}, shape} -> {x, y, shape} end)
+  end
+
+  defp move_data(game, move_fn) do
     old = game.tetro
     new = game.tetro |> move_fn.()
     valid = new 
@@ -17,36 +37,30 @@ defmodule Tetris.Game do
     {old, new, valid}
   end
 
-  def move(game, move_fn) do
+  defp move(game, move_fn) do
     {old, new, valid} = move_data(game, move_fn)
     moved = Tetromino.maybe_move(old, new, valid)
     %{game | tetro: moved}
     |> show
   end
 
-  def down(%{pause: true} = game), do: game
-  def down(game) do
-    {old, new, valid} = move_data(game, &Tetromino.down/1)
-    move_down_or_merge(game, old, new, valid)
-  end
-
-  def move_down_or_merge(game, _old, new, true=_valid) do
+  defp move_down_or_merge(game, _old, new, true=_valid) do
     %{game | tetro: new}
     |> show
   end
-  def move_down_or_merge(game, old, _new, false=_valid) do
+  defp move_down_or_merge(game, old, _new, false=_valid) do
     game
     |> merge_and_next(Tetromino.show(old))
   end
 
-  def merge_and_next(game, points) do
+  defp merge_and_next(game, points) do
     game
     |> merge(points)
     |> new_tetromino
     |> check_game_over
   end
 
-  def merge(game, points) do
+  defp merge(game, points) do
     new_junkyard =
       points
       |> Enum.map(fn {x, y, shape} -> {{x, y}, shape} end)
@@ -56,7 +70,7 @@ defmodule Tetris.Game do
     |> collapse_rows
   end
 
-  def collapse_rows(game) do
+  defp collapse_rows(game) do
     rows = get_complete_rows(game)
 
     game 
@@ -97,25 +111,12 @@ defmodule Tetris.Game do
     increment_score(game, new_score)
   end
 
-  def junkyard_points(game) do
-    game.junkyard
-    |> Enum.map(fn {{x, y}, shape} -> {x, y, shape} end)
-  end
-
-  def left(game), do: game |> move(&Tetromino.left/1) |> show
-  
-  def right(game), do: game |> move(&Tetromino.right/1) |> show
-
-  def rotate(game), do: game |> move(&Tetromino.rotate/1) |> show
-
-  def drop(game), do: game |> merge_and_next(game.preview)
-
-  def new_tetromino(game) do
+  defp new_tetromino(game) do
     %{game | tetro: Tetromino.new_random()}
     |> show
   end
 
-  def show(game) do
+  defp show(game) do
     new_points = Tetromino.show(game.tetro)
     %{game | 
       points: new_points, 
@@ -126,7 +127,7 @@ defmodule Tetris.Game do
     find_lowest_preview(game, points)
   end
   
-  def find_lowest_preview(game, points) do
+  defp find_lowest_preview(game, points) do
     {moved_down, valid} = move_one_down(game, points)
 
     if !valid do
@@ -138,14 +139,12 @@ defmodule Tetris.Game do
     end
   end
 
-  def move_one_down(game, points) do
+  defp move_one_down(game, points) do
     moved_down = points |> Points.move_one_down
     valid = moved_down |> Points.valid?(game.junkyard)
 
     {moved_down, valid}
   end
-
-  def toggle_pause(game), do: %{game | pause: !game.pause}
 
   defp increment_score(game, value) do
     %{game | score: game.score + value}

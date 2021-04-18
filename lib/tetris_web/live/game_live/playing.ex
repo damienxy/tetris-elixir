@@ -125,6 +125,9 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.toggle_pause(game))
   end
 
+  def handle_info(:tick, %{assigns: %{game: %{pause: true}}} = socket) do
+    {:noreply, socket}
+  end
   def handle_info(:tick, socket) do
     {:noreply, socket |> down} 
   end
