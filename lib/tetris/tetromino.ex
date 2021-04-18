@@ -1,17 +1,7 @@
 defmodule Tetris.Tetromino do
-  # structure definition
-  # returns a Map with some restrictions (e.g. enforcing keys)
   defstruct shape: :l, rotation: 0, location: {3, -4} 
-
-  # aliasing Tetris.Point and Tetris.Points so they can be referred to as `Point`
   alias Tetris.{Point, Points}
 
-  # struct so that you can call `new` on the module instead of __struct__
-  def new(options \\ []) do
-    __struct__(options)
-  end
-
-  # returns a tetromino with a random shape, but with default location and rotation
   def new_random do
     new(shape: random_shape())
   end
@@ -40,7 +30,14 @@ defmodule Tetris.Tetromino do
     |> Points.add_shape(tetro.shape)
   end
 
-  def points(%{shape: :l}) do
+  def maybe_move(_old, new, true=_valid), do: new
+  def maybe_move(old, _new, false=_valid), do: old
+
+  defp new(options \\ []) do
+    __struct__(options)
+  end
+
+  defp points(%{shape: :l}) do
     [
             {2,1},
             {2,2},
@@ -49,7 +46,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :j}) do
+  defp points(%{shape: :j}) do
     [
                   {3,1},
                   {3,2},
@@ -58,7 +55,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :s}) do
+  defp points(%{shape: :s}) do
     [
       
             {2,2},{3,2},
@@ -67,7 +64,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :z}) do
+  defp points(%{shape: :z}) do
     [
      
       {1,2},{2,2},
@@ -76,7 +73,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-   def points(%{shape: :i}) do
+   defp points(%{shape: :i}) do
     [
 
       {1,2},{2,2},{3,2},{4,2}
@@ -85,7 +82,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :o}) do
+  defp points(%{shape: :o}) do
     [
 
             {2,2},{3,2},
@@ -94,7 +91,7 @@ defmodule Tetris.Tetromino do
     ]
   end
 
-  def points(%{shape: :t}) do
+  defp points(%{shape: :t}) do
     [
       
       {1,2},{2,2},{3,2},
@@ -127,12 +124,4 @@ defmodule Tetris.Tetromino do
   defp rotate_degrees(n) do 
     n + 90
   end
-
-  def maybe_move(_old, new, true=_valid), do: new
-  def maybe_move(old, _new, false=_valid), do: old
-
-  # alternative way to write the above functions:
-  # def maybe_move(old, new, valid) do
-  #   if valid, do: new, else: old
-  # end
 end
