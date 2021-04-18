@@ -139,6 +139,9 @@ defmodule TetrisWeb.GameLive.Playing do
     {:noreply, socket |> toggle_pause}
   end
 
+  def handle_event("keystroke", _, %{assigns: %{game: %{pause: true}}} = socket) do
+    {:noreply, socket}
+  end
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
     {:noreply, socket |> down}
   end
