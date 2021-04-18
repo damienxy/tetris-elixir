@@ -116,6 +116,10 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.down(game))
   end
 
+  def drop(%{assigns: %{game: game}} = socket) do
+    assign(socket, game: Game.drop(game))
+  end
+
   def toggle_pause(%{assigns: %{game: %{game_over: true}}} = socket), do: socket
   def toggle_pause(%{assigns: %{game: game}} = socket) do
     assign(socket, game: Game.toggle_pause(game))
@@ -149,7 +153,7 @@ defmodule TetrisWeb.GameLive.Playing do
     {:noreply, socket |> right}
   end
   def handle_event("keystroke", %{"key" => " "}, socket) do
-    {:noreply, socket |> toggle_pause}
+    {:noreply, socket |> drop}
   end
   def handle_event("keystroke", _, socket) do
     {:noreply, socket}
