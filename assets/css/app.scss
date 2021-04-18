@@ -120,7 +120,18 @@
   font-size: 16px;
 }
 
-.tetris-game-over {
+.tetris-pause {
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.tetris-pause:hover {
+  text-decoration: underline;
+}
+
+.tetris-overlay {
+  height: 600px;
   position: absolute;
   left: 0;
   right: 0;
@@ -135,14 +146,16 @@
   font-family: monospace;
 }
 
-.tetris-game-over-heading {
+.tetris-game-over-heading,
+.tetris-pause-heading {
   font-size: 30px;
   font-weight: bold;
   font-family: monospace;
   margin-bottom: 12px;
 }
 
-.tetris-play-button {
+.tetris-play-button,
+.tetris-pause-button {
 }
 
 .tetris-hide {

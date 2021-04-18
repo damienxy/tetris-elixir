@@ -68,9 +68,19 @@ defmodule TetrisWeb.GameLive.Playing do
   defp render_game_over(assigns) do
     ~L"""
     <%= if @game.game_over do %>
-      <div class="tetris-game-over">
+      <div class="tetris-overlay">
         <div class="tetris-game-over-heading">Game over!</div>
         <button class="tetris-play-button" phx-click="restart">Play again</button>
+      </div>
+    <% end %>
+    """
+  end
+
+  defp render_pause(assigns) do
+    ~L"""
+    <%= if @game.pause do %>
+      <div class="tetris-overlay">
+        <div class="tetris-pause-heading">Paused</div>
       </div>
     <% end %>
     """
@@ -106,6 +116,7 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.down(game))
   end
 
+  def toggle_pause(%{assigns: %{game: %{game_over: true}}} = socket), do: socket
   def toggle_pause(%{assigns: %{game: game}} = socket) do
     assign(socket, game: Game.toggle_pause(game))
   end
@@ -122,6 +133,10 @@ defmodule TetrisWeb.GameLive.Playing do
 
   def handle_event("restart", _, socket) do
     {:noreply, socket |> new_game}
+  end
+
+  def handle_event("pause", _, socket) do
+    {:noreply, socket |> toggle_pause}
   end
 
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
