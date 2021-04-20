@@ -17,6 +17,14 @@ import { Socket } from 'phoenix';
 import topbar from 'topbar';
 import { LiveSocket } from 'phoenix_live_view';
 
+window.addEventListener(
+  'keydown',
+  event =>
+    ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(
+      event.key
+    ) && event.preventDefault()
+);
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
