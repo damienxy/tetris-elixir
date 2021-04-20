@@ -120,8 +120,28 @@
   font-size: 16px;
 }
 
+.tetris-highscore {
+  height: 156px;
+  margin-top: 40px;
+}
+
+.tetris-th,
+.tetris-td {
+  padding: 0 5px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.tetris-td {
+  text-align: center;
+}
+
+.tetris-th {
+  border-bottom: solid 1px grey;
+}
+
 .tetris-actions {
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .tetris-pause,

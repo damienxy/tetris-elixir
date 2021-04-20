@@ -2,18 +2,18 @@ defmodule TetrisWeb.GameLive.Playing do
   use TetrisWeb, :live_view
   alias Tetris.Game
 
-  # the mount sets up the initial data for a live view
-  # the socket contains the entire info for the state for the live view
   def mount(_params, _session, socket) do
-    # this makes sure the socket is connected before starting the timer
     if connected?(socket) do
-      # trigger tick events
       :timer.send_interval(500, :tick)
     end
-    {:ok, socket |> new_game}
-  end
 
-  # reducers related to render
+    socket = 
+      socket 
+      |> new_game
+      |> add_highscore
+
+    {:ok, socket}
+  end
 
   # width and height of the svg are calculated by assuming that 
   # the board will have 10 columns and 20 rows
@@ -86,6 +86,17 @@ defmodule TetrisWeb.GameLive.Playing do
     """
   end
 
+  defp render_highscore(assigns) do
+    ~L"""
+      <table>
+        <tr><th class="tetris-th">Highscore</th></tr>
+        <%= for score <- @highscore do %>
+          <tr><td class="tetris-td"><%= score %></td></tr>
+        <% end %>
+      </table>
+    """
+  end
+
   defp color(:l), do: "royalblue"
   defp color(:j), do: "limegreen"
   defp color(:s), do: "cyan"
@@ -98,7 +109,9 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.new())
   end
 
-  # reducers related to handling events
+  defp add_highscore(socket) do
+    assign(socket, highscore: [])
+  end
 
   def rotate(%{assigns: %{game: game}} = socket) do
     assign(socket, game: Game.rotate(game))
@@ -120,13 +133,28 @@ defmodule TetrisWeb.GameLive.Playing do
     assign(socket, game: Game.drop(game))
   end
 
+  def move_down(socket, move_fn) do
+    socket
+    |> move_fn.()
+    |> maybe_update_highscore
+  end
+
   def toggle_pause(%{assigns: %{game: %{game_over: true}}} = socket), do: socket
   def toggle_pause(%{assigns: %{game: game}} = socket) do
     assign(socket, game: Game.toggle_pause(game))
   end
 
-  def handle_info(:tick, %{assigns: %{game: %{pause: true}}} = socket) do
-    {:noreply, socket}
+  defp maybe_update_highscore(%{assigns: %{game: game}} = socket) do
+    cond do
+      game.game_over == false -> socket
+      game.score == 0 -> socket
+      true -> update_highscore(socket)
+    end
+  end
+
+  defp update_highscore(%{assigns: %{game: game}} = socket) do
+    socket 
+    |> push_event("updateHighscore", %{score: game.score})
   end
 
   def handle_info(:tick, %{assigns: %{game: game}} = socket)
@@ -135,7 +163,7 @@ defmodule TetrisWeb.GameLive.Playing do
     do: {:noreply, socket}
   
   def handle_info(:tick, socket) do
-    {:noreply, socket |> down} 
+    {:noreply, socket |> move_down(&down/1)} 
   end
 
   def handle_event("restart", _, socket) do
@@ -152,7 +180,7 @@ defmodule TetrisWeb.GameLive.Playing do
     do: {:noreply, socket}
 
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
-    {:noreply, socket |> down}
+    {:noreply, socket |> move_down(&down/1)}
   end
   def handle_event("keystroke", %{"key" => "ArrowUp"}, socket) do
     {:noreply, socket |> rotate}
@@ -164,9 +192,13 @@ defmodule TetrisWeb.GameLive.Playing do
     {:noreply, socket |> right}
   end
   def handle_event("keystroke", %{"key" => " "}, socket) do
-    {:noreply, socket |> drop}
+    {:noreply, socket |> move_down(&drop/1)}
   end
   def handle_event("keystroke", _, socket) do
     {:noreply, socket}
+  end
+
+  def handle_event("loadHighscore", %{"highscore" => highscore}, socket) do
+    {:noreply, assign(socket, highscore: highscore)}
   end
 end

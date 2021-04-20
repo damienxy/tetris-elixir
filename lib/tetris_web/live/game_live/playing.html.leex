@@ -3,7 +3,10 @@
   <div class="tetris-game">
     <div class="tetris-info tetris-hide">
       <div class="tetris-heading">TETRIS</div>
-      <div class="tetris-score">Your score: <%=@game.score %></div>
+      <div class="tetris-score">Your score: <%= @game.score %></div>
+      <div class="tetris-highscore" phx-hook="Highscore" id="highscore">
+        <%= render_highscore(assigns) %>
+      </div>
       <section class="tetris-actions">
         <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
         <div class="tetris-restart" phx-click="restart">Restart</div>
@@ -16,7 +19,10 @@
     </div>
     <div class="tetris-info">
       <div class="tetris-heading">TETRIS</div>
-      <div class="tetris-score">Your score: <%=@game.score %></div>
+      <div class="tetris-score">Your score: <%= @game.score %></div>
+      <div class="tetris-highscore" phx-hook="Highscore" id="highscore">
+        <%= render_highscore(assigns) %>
+      </div>
       <section class="tetris-actions">
         <div class="tetris-pause" phx-click="pause"><%= if @game.pause do "Continue" else "Pause" end %></div>
         <div class="tetris-restart" phx-click="restart">Restart</div>

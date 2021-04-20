@@ -25,11 +25,45 @@ window.addEventListener(
     ) && event.preventDefault()
 );
 
+const getHighscoreFromLocalStorage = () =>
+  localStorage
+    .getItem('highscore')
+    .split(',')
+    .map(n => +n);
+
+let Hooks = {};
+
+Hooks.Highscore = {
+  mounted() {
+    this.pushEvent('loadHighscore', {
+      highscore: getHighscoreFromLocalStorage()
+    });
+
+    this.handleEvent('updateHighscore', ({ score }) => {
+      const currentHighscore = getHighscoreFromLocalStorage();
+      const newHighscore = [...new Set([...currentHighscore, score])]
+        .filter(n => n > 0)
+        .sort((a, b) => b - a)
+        .slice(0, 5);
+      localStorage.setItem('highscore', newHighscore);
+      this.pushEvent('loadHighscore', {
+        highscore: newHighscore
+      });
+    });
+  },
+  reconnected() {
+    this.pushEvent('loadHighscore', {
+      highscore: getHighscoreFromLocalStorage()
+    });
+  }
+};
+
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
 let liveSocket = new LiveSocket('/live', Socket, {
-  params: { _csrf_token: csrfToken }
+  params: { _csrf_token: csrfToken },
+  hooks: Hooks
 });
 
 // Show progress bar on live navigation and form submits
