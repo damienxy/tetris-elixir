@@ -128,6 +128,12 @@ defmodule TetrisWeb.GameLive.Playing do
   def handle_info(:tick, %{assigns: %{game: %{pause: true}}} = socket) do
     {:noreply, socket}
   end
+
+  def handle_info(:tick, %{assigns: %{game: game}} = socket)
+    when game.game_over == true
+    when game.pause == true,
+    do: {:noreply, socket}
+  
   def handle_info(:tick, socket) do
     {:noreply, socket |> down} 
   end
@@ -140,9 +146,11 @@ defmodule TetrisWeb.GameLive.Playing do
     {:noreply, socket |> toggle_pause}
   end
 
-  def handle_event("keystroke", _, %{assigns: %{game: %{pause: true}}} = socket) do
-    {:noreply, socket}
-  end
+  def handle_event("keystroke", _, %{assigns: %{game: game}} = socket)
+    when game.game_over == true
+    when game.pause == true,
+    do: {:noreply, socket}
+
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
     {:noreply, socket |> down}
   end
