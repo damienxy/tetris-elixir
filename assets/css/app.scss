@@ -90,6 +90,8 @@
 
 /* Tetris styles */
 .tetris-hero {
+  width: 720px;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -108,6 +110,9 @@
 }
 
 .tetris-info {
+  position: absolute;
+  right: 40px;
+  width: 130px;
   font-family: monospace;
 }
 
@@ -183,6 +188,12 @@
 .tetris-pause-button {
 }
 
-.tetris-hide {
-  visibility: hidden;
+@media screen and (max-width: 800px) {
+  .tetris-hero {
+    width: 550px;
+    align-items: baseline;
+  }
+  .tetris-game {
+    padding: 40px;
+  }
 }
