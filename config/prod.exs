@@ -12,7 +12,10 @@ use Mix.Config
 config :tetris, TetrisWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   url: [host: "tetris.gigalixirapp.com"],
-  check_origin: ["https://tetris.gigalixirapp.com"],
+  check_origin: [
+    "https://tetris.gigalixirapp.com", 
+    "https://tetris.mediocregames.xyz"
+  ],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
