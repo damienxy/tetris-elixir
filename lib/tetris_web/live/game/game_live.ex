@@ -1,4 +1,4 @@
-defmodule TetrisWeb.GameLive.Playing do
+defmodule TetrisWeb.GameLive do
   use TetrisWeb, :live_view
   alias Tetris.Game
 
