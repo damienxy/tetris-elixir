@@ -26,9 +26,9 @@ window.addEventListener(
 );
 
 const getHighscoreFromLocalStorage = () =>
-  localStorage
-    .getItem('highscore')
+  (localStorage.getItem('highscore') || '')
     .split(',')
+    .filter(Boolean)
     .map(n => +n);
 
 let Hooks = {};
@@ -42,7 +42,7 @@ Hooks.Highscore = {
     this.handleEvent('updateHighscore', ({ score }) => {
       const currentHighscore = getHighscoreFromLocalStorage();
       const newHighscore = [...new Set([...currentHighscore, score])]
-        .filter(n => n > 0)
+        .filter(Boolean)
         .sort((a, b) => b - a)
         .slice(0, 5);
       localStorage.setItem('highscore', newHighscore);
