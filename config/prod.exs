@@ -11,7 +11,8 @@ use Mix.Config
 # before starting your production server.
 config :tetris, TetrisWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
-  url: [host: "example.com", port: 80],
+  url: [host: "tetris.gigalixirapp.com"],
+  check_origin: ["https://tetris.gigalixirapp.com"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
