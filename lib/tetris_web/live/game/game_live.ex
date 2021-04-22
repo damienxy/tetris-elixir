@@ -87,13 +87,16 @@ defmodule TetrisWeb.GameLive do
   end
 
   defp render_highscore(assigns) do
+    placeholders = List.duplicate('-', 5)  
     ~L"""
-      <table>
-        <tr><th class="tetris-th">Highscore</th></tr>
-        <%= for score <- @highscore do %>
+    <table>
+      <tr><th class="tetris-th">Highscore</th></tr>
+      <%= if !!@highscore do %>
+        <%= for score <- @highscore ++ placeholders |> Enum.take(5) do %>
           <tr><td class="tetris-td"><%= score %></td></tr>
         <% end %>
-      </table>
+      <% end %>
+    </table>
     """
   end
 
