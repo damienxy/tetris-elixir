@@ -136,9 +136,9 @@ defmodule TetrisWeb.GameLive do
     assign(socket, game: game)
   end
 
-  defp set_timer(interval), do: Process.send_after(self(), :tick, interval)
+  defp set_timer(interval), do: :erlang.send_after(interval,  self(), :tick)
 
-  defp cancel_timer(timer), do: Process.cancel_timer(timer)
+  defp cancel_timer(timer), do: :erlang.cancel_timer(timer)
   
   defp update_timer(%{assigns: %{timer: timer, game: %{interval: interval}}} = socket) do
     timer |> cancel_timer
