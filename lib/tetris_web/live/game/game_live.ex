@@ -3,14 +3,10 @@ defmodule TetrisWeb.GameLive do
   alias Tetris.Game
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      :timer.send_interval(500, :tick)
-    end
-
     socket = 
       socket 
+      |> initialize
       |> new_game
-      |> add_highscore
 
     {:ok, socket}
   end
@@ -86,17 +82,40 @@ defmodule TetrisWeb.GameLive do
     """
   end
 
+  defp render_level(assigns) do
+    ~L"""
+    <div class="tetris-level">Level: <%= @game.level %></div>
+    <form class="tetris-level-form" phx-change="level" phx-hook="Level" id="level">
+      <%= if @game.game_over or @game.pause do %>
+        <select name="level" class="tetris-level-select">
+      <% else %>
+        <select disabled name="level" class="tetris-level-select-disabled">
+      <% end %>
+        <%= for num <- 1..10 |> Enum.to_list do %>
+          <%= if @start_level == num do %>
+            <option selected value="<%= num %>"><%= num %></option>
+          <% else %>
+            <option value="<%= num %>"><%= num %></option>
+          <% end %> 
+        <% end %>
+      </select>
+    </form>
+    """
+  end
+
   defp render_highscore(assigns) do
     placeholders = List.duplicate('-', 5)  
     ~L"""
-    <table>
-      <tr><th class="tetris-th">Highscore</th></tr>
-      <%= if !!@highscore do %>
-        <%= for score <- @highscore ++ placeholders |> Enum.take(5) do %>
-          <tr><td class="tetris-td"><%= score %></td></tr>
+    <div class="tetris-highscore" phx-hook="Highscore" id="highscore">
+      <table>
+        <tr><th class="tetris-th">Highscore</th></tr>
+        <%= if !!@highscore do %>
+          <%= for score <- @highscore ++ placeholders |> Enum.take(5) do %>
+            <tr><td class="tetris-td"><%= score %></td></tr>
+          <% end %>
         <% end %>
-      <% end %>
-    </table>
+      </table>
+    </div>
     """
   end
 
@@ -107,13 +126,24 @@ defmodule TetrisWeb.GameLive do
   defp color(:o), do: "red"
   defp color(:i), do: "yellow"
   defp color(:t), do: "orange"
-  
-  defp new_game(socket) do
-    assign(socket, game: Game.new())
+
+  defp initialize(socket) do
+    assign(socket, highscore: [], start_level: 1, timer: set_timer(500))
   end
 
-  defp add_highscore(socket) do
-    assign(socket, highscore: [])
+  defp new_game(%{assigns: %{start_level: start_level}} = socket) do
+    game = Game.new |> Game.set_level_and_speed(start_level)
+    assign(socket, game: game)
+  end
+
+  defp set_timer(interval), do: Process.send_after(self(), :tick, interval)
+
+  defp cancel_timer(timer), do: Process.cancel_timer(timer)
+  
+  defp update_timer(%{assigns: %{timer: timer, game: %{interval: interval}}} = socket) do
+    timer |> cancel_timer
+    new_timer = set_timer(interval)
+    assign(socket, timer: new_timer)
   end
 
   def rotate(%{assigns: %{game: game}} = socket) do
@@ -140,6 +170,7 @@ defmodule TetrisWeb.GameLive do
     socket
     |> move_fn.()
     |> maybe_update_highscore
+    |> update_timer
   end
 
   def toggle_pause(%{assigns: %{game: %{game_over: true}}} = socket), do: socket
@@ -160,6 +191,11 @@ defmodule TetrisWeb.GameLive do
     |> push_event("updateHighscore", %{score: game.score})
   end
 
+  defp update_start_level(socket, level) do
+    socket
+    |> push_event("updateLevel", %{level: level})
+  end
+
   def handle_info(:tick, %{assigns: %{game: game}} = socket)
     when game.game_over == true
     when game.pause == true,
@@ -170,11 +206,15 @@ defmodule TetrisWeb.GameLive do
   end
 
   def handle_event("restart", _, socket) do
-    {:noreply, socket |> new_game}
+    {:noreply, socket |> new_game |> update_timer}
   end
 
   def handle_event("pause", _, socket) do
-    {:noreply, socket |> toggle_pause}
+    {:noreply, socket |> toggle_pause |> update_timer}
+  end
+
+  def handle_event("level", %{"level" => level}, socket) do
+    {:noreply, socket |> update_start_level(level)}
   end
 
   def handle_event("keystroke", _, %{assigns: %{game: game}} = socket)
@@ -203,5 +243,10 @@ defmodule TetrisWeb.GameLive do
 
   def handle_event("loadHighscore", %{"highscore" => highscore}, socket) do
     {:noreply, assign(socket, highscore: highscore)}
+  end
+
+  def handle_event("loadLevel", %{"level" => level}, %{assigns: %{game: game}} = socket) do
+    updated_game =  Game.set_level_and_speed(game, level)
+    {:noreply, assign(socket, start_level: level, game: updated_game)}
   end
 end

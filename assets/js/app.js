@@ -28,8 +28,10 @@ window.addEventListener(
 const getHighscoreFromLocalStorage = () =>
   (localStorage.getItem('highscore') || '')
     .split(',')
-    .filter(Boolean)
-    .map(n => +n);
+    .map(n => +n)
+    .filter(Boolean);
+
+const getLevelFromLocalStorage = () => +localStorage.getItem('level') || 1;
 
 let Hooks = {};
 
@@ -54,6 +56,22 @@ Hooks.Highscore = {
   reconnected() {
     this.pushEvent('loadHighscore', {
       highscore: getHighscoreFromLocalStorage()
+    });
+  }
+};
+
+Hooks.Level = {
+  mounted() {
+    this.pushEvent('loadLevel', {
+      level: getLevelFromLocalStorage()
+    });
+
+    this.handleEvent('updateLevel', ({ level }) => {
+      const newLevel = +level;
+      localStorage.setItem('level', newLevel);
+      this.pushEvent('loadLevel', {
+        level: newLevel
+      });
     });
   }
 };

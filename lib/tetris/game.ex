@@ -1,5 +1,16 @@
 defmodule Tetris.Game do
-  defstruct [:tetro, points: [], preview: [], score: 0, junkyard: %{}, game_over: false, pause: false]
+  defstruct [
+    :tetro, 
+    points: [], 
+    preview: [], 
+    score: 0, 
+    removed_rows: 0,
+    junkyard: %{}, 
+    game_over: false, 
+    pause: false, 
+    level: 1, 
+    interval: 500
+  ]
   alias Tetris.{Points, Tetromino}
 
   def new do
@@ -25,6 +36,12 @@ defmodule Tetris.Game do
   def junkyard_points(game) do
     game.junkyard
     |> Enum.map(fn {{x, y}, shape} -> {x, y, shape} end)
+  end
+
+  def set_level_and_speed(game, level) do
+    game
+    |> set_level(level)
+    |> set_speed
   end
 
   defp move_data(game, move_fn) do
@@ -87,7 +104,11 @@ defmodule Tetris.Game do
   end
 
   defp absorb(game, []), do: game
-  defp absorb(game, [y|ys]), do: remove_row(game, y) |> absorb(ys)
+  defp absorb(game, [y|ys]) do
+    remove_row(game, y) 
+    |> maybe_increment_level
+    |> absorb(ys)
+  end
 
   defp remove_row(game, row) do
     new_junkyard = 
@@ -95,8 +116,10 @@ defmodule Tetris.Game do
       |> Enum.reject(fn {{_x, y}, _shape} -> y == row end)
       |> Enum.map(fn {{x, y}, shape} -> {{x, maybe_move_y(y, row)}, shape} end)
       |> Map.new
-    
-    %{game | junkyard: new_junkyard}
+
+    removed_rows = game.removed_rows + 1
+
+    %{game | junkyard: new_junkyard, removed_rows: removed_rows}
   end
 
   defp maybe_move_y(y, row) when y < row, do: y + 1
@@ -148,6 +171,35 @@ defmodule Tetris.Game do
 
   defp increment_score(game, value) do
     %{game | score: game.score + value}
+  end
+
+  defp maybe_increment_level(%{level: 10} = game), do: game
+  defp maybe_increment_level(game) do
+    should_increment = rem(game.removed_rows, 10) == 0
+    if should_increment do
+      game |> increment_level
+    else
+      game
+    end
+  end
+
+  defp increment_level(game) do
+    game
+    |> set_level_and_speed(game.level + 1)
+  end
+
+  defp set_level(game, level) do 
+    %{game | level: level}
+  end
+
+  defp set_speed(game) do
+    %{game | interval: get_interval_for_level(game)}
+  end
+
+  defp get_interval_for_level(game) do
+    11
+    |> Kernel.-(game.level)
+    |> Kernel.*(50)
   end
 
   defp check_game_over(game) do
