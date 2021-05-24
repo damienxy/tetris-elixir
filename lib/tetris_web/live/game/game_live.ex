@@ -2,6 +2,8 @@ defmodule TetrisWeb.GameLive do
   use TetrisWeb, :live_view
   alias Tetris.Game
 
+  @rotate_keys ["ArrowUp", "a"]
+
   def mount(_params, _session, socket) do
     socket = 
       socket 
@@ -26,7 +28,7 @@ defmodule TetrisWeb.GameLive do
 
   defp render_preview(assigns, size) do
     ~L"""
-    <%= for {x, y, shape} <- @game.preview do %>
+    <%= for {x, y, _shape} <- @game.preview do %>
       <rect
         width="<%= size %>" height="<%= size %>"
         x="<%= (x - 1) * size %>"
@@ -168,9 +170,9 @@ defmodule TetrisWeb.GameLive do
 
   def move_down(socket, move_fn) do
     socket
+    |> update_timer
     |> move_fn.()
     |> maybe_update_highscore
-    |> update_timer
   end
 
   def toggle_pause(%{assigns: %{game: %{game_over: true}}} = socket), do: socket
@@ -225,7 +227,7 @@ defmodule TetrisWeb.GameLive do
   def handle_event("keystroke", %{"key" => "ArrowDown"}, socket) do
     {:noreply, socket |> move_down(&down/1)}
   end
-  def handle_event("keystroke", %{"key" => "ArrowUp"}, socket) do
+  def handle_event("keystroke", %{"key" => key}, socket) when key in @rotate_keys do
     {:noreply, socket |> rotate}
   end
   def handle_event("keystroke", %{"key" => "ArrowLeft"}, socket) do
