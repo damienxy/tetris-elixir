@@ -33,7 +33,7 @@ defmodule Tetris.Tetromino do
   def maybe_move(_old, new, true=_valid), do: new
   def maybe_move(old, _new, false=_valid), do: old
 
-  defp new(options \\ []) do
+  defp new(options) do
     __struct__(options)
   end
 
@@ -102,15 +102,7 @@ defmodule Tetris.Tetromino do
   # defp defines private functions
 
   defp grid(shape) when shape in [:i, :o] do 5 end
-  defp grid(shape), do: 4
-
-  defp color(:l), do: "royalblue"
-  defp color(:j), do: "limegreen"
-  defp color(:s), do: "cyan"
-  defp color(:z), do: "darkviolet"
-  defp color(:o), do: "red"
-  defp color(:i), do: "yellow"
-  defp color(:t), do: "orange"
+  defp grid(_shape), do: 4
 
   defp random_shape do
     ~w[i t o l j z s]a
