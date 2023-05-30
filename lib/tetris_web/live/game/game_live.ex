@@ -5,15 +5,15 @@ defmodule TetrisWeb.GameLive do
   @rotate_keys ["ArrowUp", "a"]
 
   def mount(_params, _session, socket) do
-    socket = 
-      socket 
+    socket =
+      socket
       |> initialize
       |> new_game
 
     {:ok, socket}
   end
 
-  # width and height of the svg are calculated by assuming that 
+  # width and height of the svg are calculated by assuming that
   # the board will have 10 columns and 20 rows
   defp render_board(assigns) do
     tetromino_size = 30
@@ -54,8 +54,8 @@ defmodule TetrisWeb.GameLive do
       <polyline
         opacity="0.1"
         points="
-          <%= ((x - 1) * size + 1) %>,<%= ((y - 1) * size + 1) %> 
-          <%= ((x - 1) * size + size)%>,<%= ((y - 1) * size + 1) %> 
+          <%= ((x - 1) * size + 1) %>,<%= ((y - 1) * size + 1) %>
+          <%= ((x - 1) * size + size)%>,<%= ((y - 1) * size + 1) %>
           <%= ((x - 1) * size + size)%>,<%= ((y - 1) * size + size) %>
         "
       />
@@ -98,7 +98,7 @@ defmodule TetrisWeb.GameLive do
             <option selected value="<%= num %>"><%= num %></option>
           <% else %>
             <option value="<%= num %>"><%= num %></option>
-          <% end %> 
+          <% end %>
         <% end %>
       </select>
     </form>
@@ -106,7 +106,7 @@ defmodule TetrisWeb.GameLive do
   end
 
   defp render_highscore(assigns) do
-    placeholders = List.duplicate('-', 5)  
+    placeholders = List.duplicate('-', 5)
     ~L"""
     <div class="tetris-highscore" phx-hook="Highscore" id="highscore">
       <table>
@@ -141,7 +141,7 @@ defmodule TetrisWeb.GameLive do
   defp set_timer(interval), do: :erlang.send_after(interval,  self(), :tick)
 
   defp cancel_timer(timer), do: :erlang.cancel_timer(timer)
-  
+
   defp update_timer(%{assigns: %{timer: timer, game: %{interval: interval}}} = socket) do
     timer |> cancel_timer
     new_timer = set_timer(interval)
@@ -189,7 +189,7 @@ defmodule TetrisWeb.GameLive do
   end
 
   defp update_highscore(%{assigns: %{game: game}} = socket) do
-    socket 
+    socket
     |> push_event("updateHighscore", %{score: game.score})
   end
 
@@ -202,9 +202,9 @@ defmodule TetrisWeb.GameLive do
     when game.game_over == true
     when game.pause == true,
     do: {:noreply, socket}
-  
+
   def handle_info(:tick, socket) do
-    {:noreply, socket |> move_down(&down/1)} 
+    {:noreply, socket |> move_down(&down/1)}
   end
 
   def handle_event("restart", _, socket) do
