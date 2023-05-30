@@ -19,25 +19,20 @@ defmodule TetrisWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint TetrisWeb.Endpoint
+
+      use TetrisWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import TetrisWeb.ConnCase
-
-      alias TetrisWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint TetrisWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Tetris.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Tetris.Repo, {:shared, self()})
-    end
-
+    Tetris.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

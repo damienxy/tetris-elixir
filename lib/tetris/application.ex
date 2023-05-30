@@ -5,14 +5,17 @@ defmodule Tetris.Application do
 
   use Application
 
+  @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Tetris.Repo,
       # Start the Telemetry supervisor
       TetrisWeb.Telemetry,
+      # Start the Ecto repository
+      Tetris.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Tetris.PubSub},
+      # Start Finch
+      {Finch, name: Tetris.Finch},
       # Start the Endpoint (http/https)
       TetrisWeb.Endpoint
       # Start a worker by calling: Tetris.Worker.start_link(arg)
@@ -27,6 +30,7 @@ defmodule Tetris.Application do
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
+  @impl true
   def config_change(changed, _new, removed) do
     TetrisWeb.Endpoint.config_change(changed, removed)
     :ok
